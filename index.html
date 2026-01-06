@@ -1,47 +1,41 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHRISTMAS COMES BUT ONCE A YEAR</title>
     <style>
-        /* 1. 흰색 배경 및 중앙 정렬 세팅 */
         body { 
             background-color: #ffffff; 
             color: #000000; 
             font-family: 'Courier New', Courier, monospace; 
             margin: 0; 
+            padding: 0;
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             justify-content: center; 
-            min-height: 100vh; 
-            overflow: hidden; 
+            min-height: 100vh;
         }
-
-        /* 2. 이미지 설정: 휴대폰에서도 안 잘리게 반응형 적용 */
-        #frame-container {
+        #content-wrapper {
             width: 90%; 
-            max-width: 1000px; /* PC에서는 최대 1000px까지만 */
-            text-align: center;
+            max-width: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
-
         #main-frame { 
             width: 100%; 
             height: auto; 
             display: block;
+            margin: 0 auto;
         }
-
-        /* 3. 날짜와 시계 설정: 이미지 아래 왼쪽 정렬 */
         #info-container { 
-            margin-top: 40px; 
-            text-align: left; 
-            width: 100%; 
+            margin-top: 5vh; 
             font-size: 14px; 
             line-height: 1.6;
+            color: #000000;
         }
-
-        /* 모바일 대응: 화면이 작아지면 글씨 크기도 조절 */
         @media (max-width: 600px) {
             #info-container { font-size: 11px; }
         }
@@ -49,11 +43,8 @@
 </head>
 <body>
 
-    <div id="frame-container">
-        <!-- 현재 시간에 맞는 이미지가 뜨는 곳 -->
+    <div id="content-wrapper">
         <img id="main-frame" src="" alt="Loading Frame...">
-
-        <!-- 하단 정보 영역: 인덱스, 시간, 날짜 -->
         <div id="info-container">
             <div id="frame-index"></div>
             <div id="active-duration"></div>
@@ -61,42 +52,48 @@
     </div>
 
     <script>
-        // --- 설정 데이터 ---
-        const START_DATE = new Date("2025-12-26T00:00:00Z").getTime(); // 기준일 (12/26 0시)
         const TOTAL_FRAMES = 11920;
-        const SEC_PER_YEAR = 31536000; // 365일(초)
+        const SEC_PER_YEAR = 31536000; // 365일 기준
         const SEC_PER_FRAME = SEC_PER_YEAR / TOTAL_FRAMES;
 
         function updateArchive() {
-            const now = new Date();
-            // 1년 주기로 현재 시점이 몇 번째 초인지 계산
-            const elapsed = ((now.getTime() - START_DATE) / 1000) % SEC_PER_YEAR;
-            const frameIdx = Math.floor(elapsed / SEC_PER_FRAME) + 1;
+            const now = new Date(); // 1. 접속한 기기의 현지 시각을 읽어옴
 
-            // 1. 이미지 경로 업데이트 (web_frames 폴더 안에 00001.jpg 형식이 있어야 함)
+            // 2. 현지 시각 기준으로 매년 12/26 00:00를 시작점으로 설정
+            const currentYear = now.getFullYear();
+            // 현재가 12/26 이전이면 작년 12/26을, 이후면 올해 12/26을 시작점으로 함
+            const isAfterChristmas = (now.getMonth() === 11 && now.getDate() >= 26);
+            const startYear = isAfterChristmas ? currentYear : currentYear - 1;
+            
+            // 현지 시간대의 12월 26일 0시 0분 0초
+            const localStart = new Date(startYear, 11, 26, 0, 0, 0);
+
+            // 3. 경과 시간 계산 (초 단위)
+            const elapsed = (now.getTime() - localStart.getTime()) / 1000;
+            
+            // 4. 현재 프레임 인덱스 계산 (1~11,920)
+            const frameIdx = Math.floor((elapsed % SEC_PER_YEAR) / SEC_PER_FRAME) + 1;
+
+            // 5. 이미지 업데이트
             const imgNum = String(frameIdx).padStart(5, '0');
             document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
 
-            // 2. 해당 프레임의 시작/종료 시간 계산
-            const frameStart = new Date(START_DATE + (frameIdx - 1) * SEC_PER_FRAME * 1000);
-            const frameEnd = new Date(START_DATE + frameIdx * SEC_PER_FRAME * 1000);
+            // 6. 텍스트 업데이트 (현지 시간대 기준)
+            const frameStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
+            const frameEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
 
-            // 3. 텍스트 정보 출력
             document.getElementById('frame-index').innerText = `Frame Index : ${frameIdx.toLocaleString()} / ${TOTAL_FRAMES.toLocaleString()}`;
             
-            // 날짜 및 시간 포맷 설정
-            const options = { month: 'short', day: '2-digit', year: 'numeric' };
-            const dateStr = frameStart.toLocaleDateString('en-US', options); // 예: Jan 06, 2026
+            const dateOptions = { month: 'short', day: '2-digit', year: 'numeric' };
+            const dateStr = frameStart.toLocaleDateString('en-US', dateOptions);
             const startTimeStr = frameStart.toLocaleTimeString('en-GB', { hour12: false });
             const endTimeStr = frameEnd.toLocaleTimeString('en-GB', { hour12: false });
 
             document.getElementById('active-duration').innerText = `Active Duration : ${startTimeStr} – ${endTimeStr}, ${dateStr}`;
         }
 
-        // 페이지 접속 시 즉시 실행
         updateArchive();
-        // 10초마다 현재 시간 체크해서 화면 갱신
-        setInterval(updateArchive, 10000);
+        setInterval(updateArchive, 10000); // 10초마다 갱신 체크
     </script>
 </body>
 </html>
