@@ -82,7 +82,7 @@
             const frameStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
             const frameEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
 
-            document.getElementById('frame-index').innerText = `Frame Index : ${frameIdx.toLocaleString()} / ${TOTAL_FRAMES.toLocaleString()}`;
+            document.getElementById('frame-index').innerText = `Frame Index : ${frameIdx.toLocaleString('en-US')} / ${TOTAL_FRAMES.toLocaleString('en-US')}`;
             
             const dateOptions = { month: 'short', day: '2-digit', year: 'numeric' };
             const dateStr = frameStart.toLocaleDateString('en-US', dateOptions);
