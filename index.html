@@ -74,9 +74,9 @@
             const elapsed = (now.getTime() - localStart.getTime()) / 1000;
             const frameIdx = Math.floor((elapsed % actualYearSeconds) / SEC_PER_FRAME) + 1;
 
-            // 5. 이미지 업데이트
+            // 5. 이미지 업데이트 (.png를 .webp로 변경)
             const imgNum = String(frameIdx).padStart(5, '0');
-            document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
+            document.getElementById('main-frame').src = `web_frames/${imgNum}.webp`;
 
             // 6. 텍스트 업데이트 (현지 시간대 기준)
             const frameStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
