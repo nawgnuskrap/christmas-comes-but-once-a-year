@@ -2,99 +2,51 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHRISTMAS COMES BUT ONCE A YEAR</title>
     <style>
-        body { 
-            background-color: #ffffff; 
-            color: #000000; 
-            font-family: 'Courier New', Courier, monospace; 
-            margin: 0; 
-            padding: 0;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            min-height: 100vh;
-        }
-        #content-wrapper {
-            width: 90%; 
-            max-width: 1000px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        #main-frame { 
-            width: 100%; 
-            height: auto; 
-            display: block;
-            margin: 0 auto;
-        }
-        #info-container { 
-            margin-top: 5vh; 
-            font-size: 14px; 
-            line-height: 1.6;
-            color: #000000;
-        }
-        @media (max-width: 600px) {
-            #info-container { font-size: 11px; }
-        }
+        body { background-color: #ffffff; color: #000000; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
+        #content-wrapper { width: 90%; max-width: 1000px; display: flex; flex-direction: column; align-items: flex-start; }
+        #main-frame { width: 100%; height: auto; display: block; margin: 0 auto; }
+        #info-container { margin-top: 5vh; width: 100%; font-size: 14px; line-height: 1.6; }
+        .nav-link { color: #000; text-decoration: none; cursor: pointer; text-transform: uppercase; }
+        .nav-link:hover { font-weight: bold; }
     </style>
 </head>
 <body>
-
     <div id="content-wrapper">
-        <img id="main-frame" src="" alt="Loading Frame...">
+        <img id="main-frame" src="" alt="Loading...">
         <div id="info-container">
-            <div id="frame-index"></div>
-            <div id="active-duration"></div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <div id="frame-index"></div>
+                    <div id="active-duration"></div>
+                </div>
+                <div id="archive-link-wrapper">
+                    <a href="archive.html" class="nav-link">INDEX</a>
+                </div>
+            </div>
         </div>
     </div>
-
     <script>
         const TOTAL_FRAMES = 11920;
-
-        function updateArchive() {
-            const now = new Date(); // 접속 기기의 현지 시각
-
-            // 1. 현지 시각 기준으로 시작 연도 설정
-            const currentYear = now.getFullYear();
-            const isAfterChristmas = (now.getMonth() === 11 && now.getDate() >= 26);
-            const startYear = isAfterChristmas ? currentYear : currentYear - 1;
-            
-            // 2. [수정됨] 실제 달력 기반의 시작점과 종료점 설정 (0시 0분 0초)
+        function update() {
+            const now = new Date();
+            const startYear = (now.getMonth() === 11 && now.getDate() >= 26) ? now.getFullYear() : now.getFullYear() - 1;
             const localStart = new Date(startYear, 11, 26, 0, 0, 0);
             const localEnd = new Date(startYear + 1, 11, 26, 0, 0, 0);
-
-            // 3. [수정됨] 실제 달력상의 1년 총 초 계산 (지구 자전/공전 보정 반영)
-            const actualYearSeconds = (localEnd - localStart) / 1000;
-            const SEC_PER_FRAME = actualYearSeconds / TOTAL_FRAMES;
-
-            // 4. 경과 시간 및 현재 프레임 인덱스 계산
+            const actualYearSec = (localEnd - localStart) / 1000;
+            const SEC_PER_FRAME = actualYearSec / TOTAL_FRAMES;
             const elapsed = (now.getTime() - localStart.getTime()) / 1000;
-            const frameIdx = Math.floor((elapsed % actualYearSeconds) / SEC_PER_FRAME) + 1;
+            const frameIdx = Math.floor((elapsed % actualYearSec) / SEC_PER_FRAME) + 1;
 
-            // 5. 이미지 업데이트 (.png를 .webp로 변경)
-            const imgNum = String(frameIdx).padStart(5, '0');
-            document.getElementById('main-frame').src = `web_frames/${imgNum}.webp`;
+            document.getElementById('main-frame').src = `web_frames/${String(frameIdx).padStart(5, '0')}.webp`;
+            document.getElementById('frame-index').innerText = `Frame No. : ${String(frameIdx).padStart(5, '0')} / 11920`;
 
-            // 6. 텍스트 업데이트 (현지 시간대 기준)
-            const frameStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
-            const frameEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
-
-            // 쉼표(,) 포맷 강제 고정
-            document.getElementById('frame-index').innerText = `Frame Index : ${frameIdx.toLocaleString('en-US')} / ${TOTAL_FRAMES.toLocaleString('en-US')}`;
-            
-            const dateOptions = { month: 'short', day: '2-digit', year: 'numeric' };
-            const dateStr = frameStart.toLocaleDateString('en-US', dateOptions);
-            const startTimeStr = frameStart.toLocaleTimeString('en-GB', { hour12: false });
-            const endTimeStr = frameEnd.toLocaleTimeString('en-GB', { hour12: false });
-
-            document.getElementById('active-duration').innerText = `Active Duration : ${startTimeStr} – ${endTimeStr}, ${dateStr}`;
+            const fStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
+            const fEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
+            document.getElementById('active-duration').innerText = `Active Duration : ${fStart.toLocaleTimeString('en-GB', {hour12:false})} – ${fEnd.toLocaleTimeString('en-GB', {hour12:false})}, ${fStart.toLocaleDateString('en-US', {month:'short', day:'2-digit', year:'numeric'})}`;
         }
-
-        updateArchive();
-        setInterval(updateArchive, 10000); // 10초마다 갱신
+        update(); setInterval(update, 10000);
     </script>
 </body>
 </html>
