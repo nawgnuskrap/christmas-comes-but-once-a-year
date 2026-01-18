@@ -1,26 +1,63 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>CHRISTMAS COMES BUT ONCE A YEAR</title>
     <style>
-        body { background-color: #ffffff; color: #000000; font-family: 'Courier New', Courier, monospace; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; }
-        #content-wrapper { width: 90%; max-width: 1000px; display: flex; flex-direction: column; align-items: flex-start; }
-        #main-frame { width: 100%; height: auto; display: block; margin: 0 auto; }
-        #info-container { margin-top: 5vh; width: 100%; font-size: 14px; line-height: 1.6; }
-        .nav-link { color: #000; text-decoration: none; cursor: pointer; text-transform: uppercase; }
-        .nav-link:hover { font-weight: bold; }
+        body { 
+            background-color: #ffffff; 
+            color: #000000; 
+            font-family: 'Courier New', Courier, monospace; 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        #content-wrapper { 
+            width: 90%; 
+            max-width: 1000px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: flex-start; 
+        }
+        #main-frame { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            margin: 0 auto; 
+        }
+        #info-container { 
+            margin-top: 5vh; 
+            width: 100%; 
+            font-size: 14px; 
+            line-height: 1.6; 
+        }
+        .nav-link { 
+            color: #000; 
+            text-decoration: none; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+        }
+        .nav-link:hover { 
+            font-weight: bold; 
+        }
     </style>
 </head>
 <body>
     <div id="content-wrapper">
         <img id="main-frame" src="" alt="Loading...">
         <div id="info-container">
+            <!-- 메인 페이지와 동일한 양 끝 정렬 레이아웃 -->
             <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
                 <div style="display: flex; flex-direction: column; align-items: flex-start;">
                     <div id="frame-index"></div>
                     <div id="active-duration"></div>
                 </div>
+                <!-- 우측 하단 INDEX 버튼 (frames.html로 연결) -->
                 <div><a href="frames.html" class="nav-link">INDEX</a></div>
             </div>
         </div>
@@ -37,14 +74,18 @@
         const actualYearSec = (localEnd - localStart) / 1000;
         const SEC_PER_FRAME = actualYearSec / TOTAL_FRAMES;
 
-        // JPG 확장자 적용
+        // 1. 이미지 업데이트 (JPG 고화질)
         const imgNum = String(frameIdx).padStart(5, '0');
         document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
-        document.getElementById('frame-index').innerText = `Frame No. : ${imgNum} / 11920`;
 
+        // 2. 프레임 텍스트 업데이트 (of 버전 적용)
+        document.getElementById('frame-index').innerText = `Frame No. ${imgNum} of 11920`;
+
+        // 3. 시간 계산 및 텍스트 업데이트
         const fStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
         const fEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
         const dateStr = fStart.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+        
         document.getElementById('active-duration').innerText = `Active Duration : ${fStart.toLocaleTimeString('en-GB', {hour12:false})} – ${fEnd.toLocaleTimeString('en-GB', {hour12:false})}, ${dateStr}`;
     </script>
 </body>
