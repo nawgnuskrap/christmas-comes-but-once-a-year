@@ -21,9 +21,7 @@
                     <div id="frame-index"></div>
                     <div id="active-duration"></div>
                 </div>
-                <div id="archive-link-wrapper">
-                    <a href="archive.html" class="nav-link">INDEX</a>
-                </div>
+                <div><a href="archive.html" class="nav-link">INDEX</a></div>
             </div>
         </div>
     </div>
@@ -39,12 +37,15 @@
             const elapsed = (now.getTime() - localStart.getTime()) / 1000;
             const frameIdx = Math.floor((elapsed % actualYearSec) / SEC_PER_FRAME) + 1;
 
-            document.getElementById('main-frame').src = `web_frames/${String(frameIdx).padStart(5, '0')}.webp`;
-            document.getElementById('frame-index').innerText = `Frame No. : ${String(frameIdx).padStart(5, '0')} / 11920`;
+            // JPG 확장자 적용 및 5자리 고정
+            const imgNum = String(frameIdx).padStart(5, '0');
+            document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
+            document.getElementById('frame-index').innerText = `Frame No. : ${imgNum} / 11920`;
 
             const fStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
             const fEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
-            document.getElementById('active-duration').innerText = `Active Duration : ${fStart.toLocaleTimeString('en-GB', {hour12:false})} – ${fEnd.toLocaleTimeString('en-GB', {hour12:false})}, ${fStart.toLocaleDateString('en-US', {month:'short', day:'2-digit', year:'numeric'})}`;
+            const dateStr = fStart.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+            document.getElementById('active-duration').innerText = `Active Duration : ${fStart.toLocaleTimeString('en-GB', {hour12:false})} – ${fEnd.toLocaleTimeString('en-GB', {hour12:false})}, ${dateStr}`;
         }
         update(); setInterval(update, 10000);
     </script>
