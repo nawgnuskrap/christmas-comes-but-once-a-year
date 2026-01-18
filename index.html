@@ -37,10 +37,13 @@
             const elapsed = (now.getTime() - localStart.getTime()) / 1000;
             const frameIdx = Math.floor((elapsed % actualYearSec) / SEC_PER_FRAME) + 1;
 
-            // JPG 확장자 적용 및 5자리 고정
+            // 1. 이미지 경로 업데이트 (JPG)
             const imgNum = String(frameIdx).padStart(5, '0');
             document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
-            document.getElementById('frame-index').innerText = `Frame No. : ${imgNum} / 11920`;
+
+            // 2. [수정 포인트] 작가님이 요청하신 "Frame No. 09765 of 11920" 형식 적용
+            // 콜론(:)과 슬래시(/)를 제거하고 "of"를 넣었습니다.
+            document.getElementById('frame-index').innerText = `Frame No. ${imgNum} of 11920`;
 
             const fStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
             const fEnd = new Date(localStart.getTime() + frameIdx * SEC_PER_FRAME * 1000);
