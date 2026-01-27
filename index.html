@@ -8,20 +8,16 @@
         #content-wrapper { width: 90%; max-width: 1000px; display: flex; flex-direction: column; align-items: flex-start; }
         #main-frame { width: 100%; height: auto; display: block; margin: 0 auto; }
         #info-container { margin-top: 5vh; width: 100%; font-size: 14px; line-height: 1.6; }
-        .nav-link { color: #000; text-decoration: none; cursor: pointer; text-transform: uppercase; }
-        .nav-link:hover { font-weight: bold; }
     </style>
 </head>
 <body>
     <div id="content-wrapper">
         <img id="main-frame" src="" alt="Loading...">
         <div id="info-container">
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; width: 100%;">
-                <div style="display: flex; flex-direction: column; align-items: flex-start;">
-                    <div id="frame-index"></div>
-                    <div id="active-duration"></div>
-                </div>
-                <div><a href="frames.html" class="nav-link">INDEX</a></div>
+            <!-- INDEX 버튼 영역을 삭제하고 정보 레이아웃만 유지합니다 -->
+            <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                <div id="frame-index"></div>
+                <div id="active-duration"></div>
             </div>
         </div>
     </div>
@@ -37,12 +33,10 @@
             const elapsed = (now.getTime() - localStart.getTime()) / 1000;
             const frameIdx = Math.floor((elapsed % actualYearSec) / SEC_PER_FRAME) + 1;
 
-            // 1. 이미지 경로 업데이트 (JPG)
             const imgNum = String(frameIdx).padStart(5, '0');
             document.getElementById('main-frame').src = `web_frames/${imgNum}.jpg`;
 
-            // 2. [수정 포인트] 작가님이 요청하신 "Frame No. 09765 of 11920" 형식 적용
-            // 콜론(:)과 슬래시(/)를 제거하고 "of"를 넣었습니다.
+            // Frame No. 09765 of 11920 형식 유지
             document.getElementById('frame-index').innerText = `Frame No. ${imgNum} of 11920`;
 
             const fStart = new Date(localStart.getTime() + (frameIdx - 1) * SEC_PER_FRAME * 1000);
